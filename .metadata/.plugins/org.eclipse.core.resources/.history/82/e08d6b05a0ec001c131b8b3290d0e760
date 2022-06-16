@@ -1,0 +1,48 @@
+package com.ofss.assignments.CSV_READ;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
+
+public class csv_read {
+
+	public static String readCsv(String filename, String customerId, String accountId)
+			throws IOException, CsvValidationException {
+		Reader reader = Files.newBufferedReader(Paths.get(filename));
+		CSVReader csvReader = new CSVReader(reader);
+		// Reading Records One by One in a String array
+		String[] nextRecord;
+		while ((nextRecord = csvReader.readNext()) != null) {
+			if (nextRecord[0].equals(customerId) && nextRecord[2].equals(accountId)) {
+				
+				String json_string = String.format("{\"customerId\": %s, \"CustomerName\": %s, \"AccountID\" : %s, \"AccountType\" : %s, \"AvailableBalance\" : %s}", newRecord[0],
+				
+				System.out.println("CustomerID : " + nextRecord[0]);
+				System.out.println("Customer Name : " + nextRecord[1]);
+				System.out.println("AccountID : " + nextRecord[2]);
+				System.out.println("Account Type : " + nextRecord[3]);
+				System.out.println("Available Balance : " + nextRecord[4]);
+				System.out.println("==========================");
+
+				return "Success";
+			}
+
+		}
+		csvReader.close();
+		return "404 Not found";
+
+	}
+
+	public static void main(String[] args) throws CsvValidationException, IOException {
+
+		String customer_id = "5000100006";
+		String accountId = "Q000092876521";
+		String return_value = readCsv("C:\\Users\\junai\\eclipse-workspace\\CSV-CRUD\\CustomerData.csv", customer_id,
+				accountId);
+		System.out.println(return_value);
+	}
+}

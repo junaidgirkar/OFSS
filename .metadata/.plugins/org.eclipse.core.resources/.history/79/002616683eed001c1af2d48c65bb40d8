@@ -1,0 +1,22 @@
+package com.ofss.assignments.CSV_CRUD;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+/**
+ * @author Junaid Girkar
+ *
+ */
+@Path("")
+public class CSV_CRUD {
+
+	// This method is called if HTML and XML is not requested
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public String sayPlainTextHello() {
+		return "Hello Jersey Plain";
+	}
+
+}

@@ -1,0 +1,36 @@
+package com.ofss.assignments.CSV_CRUD;
+
+import com.ofss.assignments.csv_insert.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+/**
+ * @author Junaid Girkar
+ *
+ */
+@Path("/hello")
+public class CSV_CRUD {
+
+	// This method is called if HTML and XML is not requested
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public String sayPlainTextHello() {
+		return "Hello Jersey Plain";
+	}
+
+//	@Path("/hi")
+//	@GET
+//	@Produces(MediaType.TEXT_HTML)
+//	public String sayPlainTextHello2() {
+//
+////		String customer_id = "5000100006";
+////		String accountId = "Q000092876521";
+////		String return_value = csv_read.readCsv("C:\\Users\\junai\\eclipse-workspace\\CSV-CRUD\\CustomerData.csv",
+////				customer_id, accountId);
+//		return "<html> " + "<title>" + "Hello " + "</title>" + "<body><h1>" + "Hello " + "</h1></body>" + "</html> ";
+//
+//	}
+
+}

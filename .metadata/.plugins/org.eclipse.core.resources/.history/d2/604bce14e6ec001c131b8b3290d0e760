@@ -1,0 +1,92 @@
+package com.ofss.assignments.csv_insert;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.ParseException;
+
+import org.json.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvValidationException;
+
+public class CSV_Insert {
+
+	public static boolean checkIfIdexists(String fileName, String customerId, String accountId)
+			throws CsvValidationException, IOException {
+		Reader reader = Files.newBufferedReader(Paths.get(fileName));
+		CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+		// Reading Records One by One in a String array
+		String[] nextRecord;
+		Boolean IdExists = false;
+
+		while ((nextRecord = csvReader.readNext()) != null) {
+			if (nextRecord[0].equals(customerId) || nextRecord[2].equals(accountId)) {
+				IdExists = true;
+			}
+
+		}
+		csvReader.close();
+		return IdExists;
+	}
+
+	public static String readCsv(String filename, String json_input_string)
+			throws IOException, CsvValidationException, ParseException, org.json.simple.parser.ParseException {
+
+		// create FileWriter object with file as parameter
+		FileWriter outputfile = new FileWriter(filename);
+
+		// create CSVWriter object filewriter object as parameter
+		CSVWriter writer = new CSVWriter(outputfile);
+
+		// Reading Records One by One in a String array
+		String[] nextRecord;
+		JSONArray array = new JSONArray();
+
+		// parsing file "JSONExample.json"
+		Object obj = new JSONParser().parse(json_input_string);
+
+		// typecasting obj to JSONObject
+		JSONObject jo = (JSONObject) obj;
+
+		// getting firstName and lastName
+		String customerIdToBeInserted = (String) jo.get("Customer Id");
+		String customerNameToBeInserted = (String) jo.get("Customer Name");
+		String accountIdToBeInserted = (String) jo.get("Account Id");
+		String accountTypeToBeInserted = (String) jo.get("Account Tye");
+		String AvailableBalanceToBeInserted = (String) jo.get("Available Balance");
+
+		Boolean IdExists = checkIfIdexists(filename, customerIdToBeInserted, accountIdToBeInserted);
+
+		if (IdExists) {
+			return "{\"message\" : \"Customer ID or Account ID already exists in the database\"}";
+
+		}
+		else {
+		// add data to csv
+		String[] data1 = { customerIdToBeInserted, customerNameToBeInserted, accountIdToBeInserted,
+				accountTypeToBeInserted, AvailableBalanceToBeInserted };
+		writer.writeNext(data1);
+
+		String message = jo.toString();
+		writer.close();
+		return message;
+		}
+
+	}
+
+	public static void main(String[] args) throws CsvValidationException, IOException, ParseException {
+
+		String customer_id = "5000100006";
+		String heading_name = "Account Type";
+		String return_value = readCsv("C:\\Users\\junai\\eclipse-workspace\\CSV-CRUD\\CustomerData.csv", customer_id,
+				heading_name);
+		System.out.println(return_value);
+	}
+}

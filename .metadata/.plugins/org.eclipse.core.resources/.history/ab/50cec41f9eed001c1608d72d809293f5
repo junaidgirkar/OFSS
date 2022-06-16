@@ -1,0 +1,148 @@
+package com.ofss.assignments.csvWebProject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import com.ofss.assignments.CSV_READ.csv_read;
+import com.ofss.assignments.csv_insert.CSV_Insert;
+import com.ofss.assignments.csv_read_specific.CSV_Read_Specific;
+import com.ofss.assignments.csv_update.CSV_Update;
+
+@Path("")
+public class CsvWebProject {
+	InputStream input = CsvWebProject.class.getClassLoader().getResourceAsStream("config.properties");
+
+	Properties prop = new Properties();
+	{
+
+		if (input == null) {
+			System.out.println("Sorry, unable to find config.properties");
+		}
+
+		// load a properties file from class path, inside static method
+		try {
+			prop.load(input);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.pritln("Unable to Load the properties file");
+		}
+		final String csvFileName = prop.getProperty("csvFileName");
+	}
+
+	@SuppressWarnings("unchecked")
+	@Path("/csv_read")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String csvReadData(String json_body_params) {
+		try {
+			String return_value = "";
+
+			Object obj = new JSONParser().parse(json_body_params);
+			JSONObject jo = (JSONObject) obj;
+
+			String customer_id = (String) jo.get("Customer Id");
+			String accountId = (String) jo.get("Account Id");
+
+			return_value = csv_read.readCsv("C:\\Users\\junai\\eclipse-workspace\\CSV-Web-Project\\CustomerData.csv",
+					customer_id, accountId);
+			if (return_value.length() == 2) {
+				JSONObject item = new JSONObject();
+				item.put("status", "404 Data not found");
+				return item.toString();
+			}
+			return return_value;
+
+		} catch (Exception e) {
+			System.out.println("Exception Occured\n" + e);
+			return "Exception Occured";
+		}
+	}
+
+	@Path("/csv_specific")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String readSpecificFromCSV(String json_body_params) {
+		try {
+			String return_value = "";
+
+			Object obj = new JSONParser().parse(json_body_params);
+			JSONObject jo = (JSONObject) obj;
+
+			String customerId = (String) jo.get("Customer Id");
+			String headingName = (String) jo.get("Heading Name");
+
+			return_value = CSV_Read_Specific.readCsv(
+					"C:\\Users\\junai\\eclipse-workspace\\CSV-Web-Project\\CustomerData.csv", customerId, headingName);
+
+			return return_value;
+
+		} catch (Exception e) {
+			System.out.println("Exception Occured\n" + e);
+			return "Exception Occured";
+		}
+	}
+
+	@Path("/csv_write")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String insertToCsv(String json_body_params) {
+		try {
+			String return_value = "";
+
+			Object obj = new JSONParser().parse(json_body_params);
+			JSONObject jo = (JSONObject) obj;
+			String jsonDataString = jo.toString();
+			return_value = CSV_Insert.writeToCsv(
+					"C:\\Users\\junai\\eclipse-workspace\\CSV-Web-Project\\CustomerData.csv", jsonDataString);
+
+			return return_value;
+
+		} catch (Exception e) {
+			System.out.println("Exception Occured\n" + e);
+			return "Exception Occured";
+		}
+	}
+
+	@Path("/csv_update")
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String updateItemInCSV(String json_body_params) {
+		try {
+			String return_value = "";
+
+			Object obj = new JSONParser().parse(json_body_params);
+			JSONObject jo = (JSONObject) obj;
+
+			String accountId = (String) jo.get("Account Id");
+			String headingName = (String) jo.get("Heading Name");
+			String replacementValue = (String) jo.get("Replacement");
+
+			return_value = CSV_Update.updateCSV(
+					"C:\\Users\\junai\\eclipse-workspace\\CSV-Web-Project\\CustomerData.csv", accountId, headingName,
+					replacementValue);
+
+			return return_value;
+
+		} catch (Exception e) {
+			System.out.println("Exception Occured\n" + e);
+			return "Exception Occured";
+		}
+	}
+
+}

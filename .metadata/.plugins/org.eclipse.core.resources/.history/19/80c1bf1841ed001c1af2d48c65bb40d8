@@ -1,0 +1,28 @@
+package com.ofss.assignments.csvWebProject;
+
+import javax.websocket.server.PathParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+
+/**
+ * @author Junaid Girkar
+ *
+ */
+@Path("/hello")
+public class CsvWebProject {
+	// This method is called if HTML and XML is not requested
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public String sayPlainTextHello() {
+		return "Hello Jersey Plain";
+	}
+
+	@Path("/{name}")
+	@GET
+	@Produces(MediaType.TEXT_HTML)
+	public String hello(@PathParam("name") String name) {
+		return "<html> " + "<title>" + "Hello " + name + "</title>" + "<body><h1>" + "Hello " + name + "</h1></body>"
+				+ "</html> ";
+	}
+}

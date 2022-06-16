@@ -1,0 +1,92 @@
+package com.ofss.assignments.csv_update;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.List;
+
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvException;
+import com.opencsv.exceptions.CsvValidationException;
+
+public class CSV_Update {
+
+	private static int getColumnNumber(String[] headers, String columnName) {
+		return Arrays.asList(headers).indexOf(columnName);
+	}
+
+	public static int getRowNumber(String fileName, String AccountId) throws IOException, CsvValidationException {
+		Reader reader = Files.newBufferedReader(Paths.get(fileName));
+		CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+		String[] nextRecord;
+		Integer row_number = 0;
+
+		while ((nextRecord = csvReader.readNext()) != null) {
+
+			if (nextRecord[2].equals(AccountId)) {
+				return row_number;
+			}
+
+			row_number += 1;
+
+		}
+
+		return -1;
+	}
+
+	public static String updateCSV(String fileToUpdate, String accountId, String heading_name, String replace)
+			throws IOException, CsvException {
+
+		Reader file_reader = Files.newBufferedReader(Paths.get(fileToUpdate));
+		CSVReader reader = new CSVReaderBuilder(file_reader).withSkipLines(0).build();
+//		CSVReader reader2 = new CSVReaderBuilder(file_reader).withSkipLines(0).build();
+
+		String[] header = reader.readNext();
+		Integer columnPosition = getColumnNumber(header, heading_name);
+		Integer rowPosition = getRowNumber(fileToUpdate, accountId);
+
+		if (rowPosition != -1) {
+
+//			System.out.println("Row : " + rowPosition + "\nColumn : " + columnPosition);
+
+			List<String[]> csvBody = reader.readAll();
+			// get CSV row column and replace with by using row and column
+			csvBody.get(rowPosition)[columnPosition] = replace;
+			reader.close();
+
+			// Write to CSV file which is open
+			// create FileWriter object with file as parameter
+			FileWriter outputfile = new FileWriter(fileToUpdate);
+			CSVWriter writer = new CSVWriter(outputfile);
+
+			writer.writeNext(header);
+			writer.writeAll(csvBody);
+			writer.flush();
+			writer.close();
+			String message = heading_name + " for " + accountId + " changed to " + replace
+			
+			return "{\"message\" : \"heading_name for accountId + " changed to " + replace\"}";
+		} else {
+			return "{\"message\" : \"404 Not found\"}";
+		}
+	}
+
+	public static void main(String[] args)
+			throws IOException, ParseException, org.json.simple.parser.ParseException, CsvException {
+
+		String accountId = "Q000092876521";
+		String headingName = "Available Balance";
+		String toBeUpdatedValue = "9833972998";
+
+		String status = updateCSV("C:\\Users\\junai\\eclipse-workspace\\CSV-CRUD\\CustomerData.csv", accountId,
+				headingName, toBeUpdatedValue);
+		System.out.println(status);
+
+	}
+}

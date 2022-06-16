@@ -1,0 +1,35 @@
+package com.ofss.assignments.csvWebProject;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import com.ofss.assignments.CSV_READ.csv_read;
+
+@Path("/hello")
+public class CsvWebProject {
+	// This method is called if HTML and XML is not requested
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public String sayPlainTextHello() {
+		try {
+
+			String customer_id = "5000100006";
+			String accountId = "Q000092876521";
+			System.out.println("Line 20");
+			String return_value = "";
+
+//			return_value = csv_read.readCsv("C:\\Users\\junai\\eclipse-workspace\\CSV-Web-Project\\CustomerData.csv",
+//					customer_id, accountId);
+			System.out.println(return_value);
+
+			return return_value;
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println("Exception Occured");
+			return "Exception Occured";
+		}
+	}
+}

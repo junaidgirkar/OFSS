@@ -1,0 +1,45 @@
+package com.ofss.assignments.CSV_CRUD;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
+import com.ofss.assignments.CSV_CRUD.csv_read.*;
+/**
+ * @author Junaid Girkar
+ *
+ */
+@Path("/hello")
+public class CSV_CRUD {
+
+	// This method is called if HTML and XML is not requested
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public String sayPlainTextHello() throws IOException, CsvValidationException {
+
+		Reader reader = Files.newBufferedReader(Paths.get("/CSV-CRUD/CustomerData.csv"));
+		CSVReader csvReader = new CSVReader(reader);
+		// Reading Records One by One in a String array
+		String[] nextRecord;
+		while ((nextRecord = csvReader.readNext()) != null) {
+			System.out.println("CustomerID : " + nextRecord[0]);
+			System.out.println("Customer Name : " + nextRecord[1]);
+			System.out.println("AccountID : " + nextRecord[2]);
+			System.out.println("Account Type : " + nextRecord[3]);
+			System.out.println("Available Balance : " + nextRecord[4]);
+			System.out.println("==========================");
+		}
+		csvReader.close();
+		return "Hello Jersey Plain";
+
+	}
+
+}

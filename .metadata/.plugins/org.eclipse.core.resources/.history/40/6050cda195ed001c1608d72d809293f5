@@ -1,0 +1,43 @@
+package com.ofss.assignments.csvWebProject;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import com.ofss.assignments.CSV_READ.csv_read;
+
+@Path("")
+public class CsvWebProject {
+	// This method is called if HTML and XML is not requested
+	@Path("/csv_read")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String sayPlainTextHello(String json_body_params) {
+		try {
+			String return_value = "";
+
+			Object obj = new JSONParser().parse(json_body_params);
+			JSONObject jo = (JSONObject) obj;
+
+			String customer_id = (String) jo.get("Customer Id");
+			String accountId = (String) jo.get("Account Id");
+
+			return_value = csv_read.readCsv("C:\\Users\\junai\\eclipse-workspace\\CSV-Web-Project\\CustomerData.csv",
+					customer_id, accountId);
+			if (return_value.length() == 2) {
+				return "{\"status\" : \"404 Data not found\'}";
+			}
+			return return_value;
+
+		} catch (Exception e) {
+			System.out.println("Exception Occured\n" + e);
+			return "Exception Occured";
+		}
+	}
+}
